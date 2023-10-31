@@ -6,9 +6,9 @@ public class PlayerMovement : MonoBehaviour
 {
     Animator anim;
     public GameObject weapon;
-    int bombCount = 1;
+    public int bombCount = 1;
     int direction = 1;
-    // Start is called before the first frame update
+    public int playerHealth;
     SpriteRenderer sr;
     Rigidbody2D rb;
     void Start()
@@ -144,18 +144,15 @@ public class PlayerMovement : MonoBehaviour
             2, transform.position.z + 1);
         }
 
-
-        int playerHealth = 5;
-        void OnTriggerEnter2D(Collider2D collider)
+    }
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.tag == "Enemy")
         {
-            if (collider != null && collider.gameObject.tag == "Enemy")
+            playerHealth--;
+            if (playerHealth < 1)
             {
-                playerHealth--;
-                print(playerHealth);
-                if (playerHealth <= 0)
-                {
-                    Destroy(this.gameObject);
-                }
+                Destroy(this.gameObject);
             }
         }
     }

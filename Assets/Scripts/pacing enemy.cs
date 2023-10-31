@@ -7,10 +7,15 @@ public class pacingenemy : MonoBehaviour
     SpriteRenderer sr;
     float speed = 3;
     Animator anim;
+    public int enemyHealth;
+    public int bombAmount;
+    PlayerMovement player;
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
     }
 
 
@@ -50,7 +55,12 @@ public class pacingenemy : MonoBehaviour
     {
         if (collider.gameObject.tag == "Bomb")
         {
-            Destroy(this.gameObject);
+            enemyHealth--;
+            if (enemyHealth < 1)
+            {
+                Destroy(this.gameObject);
+                player.bombCount = player.bombCount + bombAmount;
+            }
         }
     }
 }
