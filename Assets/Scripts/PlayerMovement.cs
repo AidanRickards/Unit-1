@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class test : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     Animator anim;
-
+    public GameObject weapon;
+    int bombCount = 1;
+    int direction = 1;
     // Start is called before the first frame update
     SpriteRenderer sr;
     Rigidbody2D rb;
@@ -102,24 +104,58 @@ public class test : MonoBehaviour
 
         }
 
+        if (sr.flipX == false)
+        {
+            direction = 1;
+        }
+
+        if (sr.flipX == true)
+        {
+            direction = -1;
+        }
+
+
         if (Input.GetKey("r") == true)
         {
             anim.SetBool("attack", true);
 
         }
 
-
-    }
-    int playerHealth = 5;
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider != null && collider.gameObject.tag == "Enemy")
+        int moveDirection = 1;
+        if (Input.GetKeyDown("r") && bombCount > 0)
         {
-            playerHealth--;
-            print(playerHealth);
-            if (playerHealth <= 0)
+            bombCount--;
+            
+            // Instantiate the bullet at the position and rotation of the player
+            GameObject clone;
+            clone = Instantiate(weapon, transform.position, transform.rotation);
+
+
+            // get the rigidbody component
+            Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
+
+            int power = (direction) * 15;
+            // set the velocity
+            rb.velocity = new Vector3(power * moveDirection, 0, 0);
+
+
+            // set the position close to the player
+            rb.transform.position = new Vector3(transform.position.x, transform.position.y +
+            2, transform.position.z + 1);
+        }
+
+
+        int playerHealth = 5;
+        void OnTriggerEnter2D(Collider2D collider)
+        {
+            if (collider != null && collider.gameObject.tag == "Enemy")
             {
-                Destroy(this.gameObject);
+                playerHealth--;
+                print(playerHealth);
+                if (playerHealth <= 0)
+                {
+                    Destroy(this.gameObject);
+                }
             }
         }
     }
