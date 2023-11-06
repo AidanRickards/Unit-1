@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -25,7 +28,6 @@ public class PlayerMovement : MonoBehaviour
         anim.SetBool("jump", false);
         anim.SetBool("walk", false);
         anim.SetBool("attack", false);
-        anim.SetBool("sprint", false);
         float speed = 7.5f;
 
 
@@ -60,10 +62,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if ((Input.GetKey("w") == true) && (onground == true))
+        if ((Input.GetKey("w") == true) || (Input.GetKey(KeyCode.Space) == true))
         {
-            rb.velocity = new Vector2(rb.velocity.x, 3);
-
+            if (onground == true)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 6);
+            }
         }
 
 
@@ -76,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
             sr.flipX = false;
             anim.SetBool("walk", true);
             print("Player pressed right");
-            transform.position = new Vector2(transform.position.x + (speed * Time.deltaTime), transform.position.y);
+            rb.velocity = new Vector2((speed), rb.velocity.y);
 
         }
         if (Input.GetKey("a") == true)
@@ -84,23 +88,21 @@ public class PlayerMovement : MonoBehaviour
             anim.SetBool("walk", true);
             sr.flipX = true;
             print("Player pressed left");
-            transform.position = new Vector2(transform.position.x + (-(speed) * Time.deltaTime), transform.position.y);
+            rb.velocity = new Vector2(-(speed), rb.velocity.y);
         }
 
         if (Input.GetKey(KeyCode.LeftShift) == true && Input.GetKey("d") == true)
         {
-            speed = (speed + 1);
-            anim.SetBool("sprint", true);
+            speed = (speed + 2);
             print("Player pressed right");
-            transform.position = new Vector2(transform.position.x + (speed * Time.deltaTime), transform.position.y);
+            rb.velocity = new Vector2((speed), rb.velocity.y);
 
         }
         if (Input.GetKey(KeyCode.LeftShift) == true && Input.GetKey("a") == true)
         {
-            speed = (speed + 1);
+            speed = (speed + 2);
             print("Player pressed left");
-            anim.SetBool("sprint", true);
-            transform.position = new Vector2(transform.position.x + (-(speed) * Time.deltaTime), transform.position.y);
+            rb.velocity = new Vector2(-(speed), rb.velocity.y);
 
         }
 
@@ -114,34 +116,9 @@ public class PlayerMovement : MonoBehaviour
             direction = -1;
         }
 
-
-        if (Input.GetKey("r") == true)
-        {
-            anim.SetBool("attack", true);
-
-        }
-
-        int moveDirection = 1;
         if (Input.GetKeyDown("r") && bombCount > 0)
         {
-            bombCount--;
-            
-            // Instantiate the bullet at the position and rotation of the player
-            GameObject clone;
-            clone = Instantiate(weapon, transform.position, transform.rotation);
-
-
-            // get the rigidbody component
-            Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
-
-            int power = (direction) * 15;
-            // set the velocity
-            rb.velocity = new Vector3(power * moveDirection, 0, 0);
-
-
-            // set the position close to the player
-            rb.transform.position = new Vector3(transform.position.x, transform.position.y +
-            2, transform.position.z + 1);
+            anim.SetBool("attack", true);
         }
 
     }
@@ -156,4 +133,26 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-}
+    public void BombThrow()
+    {
+        bombCount--;
+        int moveDirection = 1;
+
+        // Instantiate the bullet at the position and rotation of the player
+        GameObject clone;
+        clone = Instantiate(weapon, transform.position, transform.rotation);
+
+
+        // get the rigidbody component
+        Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
+
+        int power = (direction) * 15;
+        // set the velocity
+        rb.velocity = new Vector3(power * moveDirection, 0, 0);
+
+
+        // set the position close to the player
+        rb.transform.position = new Vector3(transform.position.x, transform.position.y +
+        2, transform.position.z + 1);
+    }
+}   
