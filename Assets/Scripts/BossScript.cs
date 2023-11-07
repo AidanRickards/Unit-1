@@ -2,13 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class pacingenemy : MonoBehaviour
+public class BossScript : MonoBehaviour
 {
     SpriteRenderer sr;
     public GameObject enemy;
-    public GameObject coin;
-    public int coinCount;
-    float speed = 3;
+    float speed = 9;
     Animator anim;
     public int enemyHealth;
     public int bombAmount;
@@ -27,8 +25,8 @@ public class pacingenemy : MonoBehaviour
         Color hitColor = Color.white;
 
         float laserlength = 0.1f;
-        Vector3 rayOffset = new Vector3(1.25f, 0, 0);
-        Vector3 rayOffset2 = new Vector3(-1.25f, 0, 0);
+        Vector3 rayOffset = new Vector3(6.25f, 0, 0);
+        Vector3 rayOffset2 = new Vector3(-6.25f, 0, 0);
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position + rayOffset, Vector2.right, laserlength);
         RaycastHit2D hit2 = Physics2D.Raycast(transform.position + rayOffset2, Vector2.left, laserlength);
@@ -43,13 +41,13 @@ public class pacingenemy : MonoBehaviour
 
         if (hit.collider != null)
         {
-            speed = (speed) = 3;
+            speed = (speed) = 9;
             sr.flipX = true;
 
         }
         if (hit2.collider != null)
         {
-            speed = (speed) = -3;
+            speed = (speed) = -9;
             sr.flipX = false;
 
         }
@@ -59,17 +57,14 @@ public class pacingenemy : MonoBehaviour
         if (collider.gameObject.tag == "Bomb")
         {
             enemyHealth--;
+            Instantiate(enemy, transform.position, transform.rotation);
             if (enemyHealth < 1)
             {
                 Destroy(this.gameObject);
-                for (int i = 0; i < coinCount; i++)
-                {
-                    Instantiate(coin, transform.position, transform.rotation);
-                }
             }
         }
     }
 
 
 }
-    
+

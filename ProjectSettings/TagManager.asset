@@ -7,6 +7,8 @@ TagManager:
   - Map
   - Enemy
   - Bomb
+  - Health
+  - Coin
   layers:
   - Default
   - TransparentFX
@@ -14,9 +16,9 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Small enemy
+  - Boss
+  - Coin
   - 
   - 
   - 

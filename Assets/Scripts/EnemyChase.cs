@@ -6,7 +6,10 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 public class enemybehaviour : MonoBehaviour
 {
     public float speed;
+    public int coinCount;
+    public GameObject coin;
     public int enemyHealth;
+    public int bombAmount;
     private float distance;
     SpriteRenderer sr;
     HelperScript helper;
@@ -51,7 +54,10 @@ public class enemybehaviour : MonoBehaviour
             if (enemyHealth < 1)
             {
                 Destroy(this.gameObject);
-                player.bombCount = player.bombCount + 10;
+                for (int i = 0; i < coinCount; i++)
+                {
+                    Instantiate(coin, transform.position, transform.rotation);
+                }
             }
         }
     }

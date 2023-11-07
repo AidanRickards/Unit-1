@@ -4,22 +4,26 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
     Animator anim;
+    public Text bombs;
     public GameObject weapon;
-    public int bombCount = 1;
+    public int bombCount = 3;
     int direction = 1;
     public int playerHealth;
     SpriteRenderer sr;
     Rigidbody2D rb;
+    HealthManager health;
     void Start()
     {
         print("start");
         anim = GetComponent<Animator>(); // ***
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        health = GameObject.FindWithTag("Health").GetComponent<HealthManager>();
     }
 
     // Update is called once per frame
@@ -29,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
         anim.SetBool("walk", false);
         anim.SetBool("attack", false);
         float speed = 7.5f;
+        rb.velocity = new Vector2(0, rb.velocity.y);
 
 
         Color hitColor = Color.white;
@@ -71,8 +76,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-
-
+        bombs.text = "Bomb Count: " + bombCount.ToString();
 
 
         if (Input.GetKey("d") == true)
@@ -126,11 +130,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collider.gameObject.tag == "Enemy")
         {
-            playerHealth--;
-            if (playerHealth < 1)
-            {
-                Destroy(this.gameObject);
-            }
+            health.TakeDamage(20);
         }
     }
     public void BombThrow()
