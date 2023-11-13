@@ -5,6 +5,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,10 +14,13 @@ public class PlayerMovement : MonoBehaviour
     public GameObject weapon;
     public int bombCount = 3;
     int direction = 1;
+    float kbcount = 0;
     public int playerHealth;
     SpriteRenderer sr;
     Rigidbody2D rb;
     HealthManager health;
+    float speed = 7.5f;
+    float kbForce;
     void Start()
     {
         print("start");
@@ -29,12 +33,55 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        kbForce = speed * 2;
+
+        if (kbcount <= 0)
+        {
+            Movement();
+        }
+        else
+        {
+            rb.velocity = new Vector2(-7.5f, 7.5f);
+            kbcount -= Time.deltaTime;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.tag == "Enemy")
+        {
+            health.TakeDamage(20);
+            kbcount = 0.2f;
+        }
+    }
+    public void BombThrow()
+    {
+        bombCount--;
+        int moveDirection = 1;
+
+        // Instantiate the bullet at the position and rotation of the player
+        GameObject clone;
+        clone = Instantiate(weapon, transform.position, transform.rotation);
+
+
+        // get the rigidbody component
+        Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
+
+        int power = (direction) * 15;
+        // set the velocity
+        rb.velocity = new Vector3(power * moveDirection, 0, 0);
+
+
+        // set the position close to the player
+        rb.transform.position = new Vector3(transform.position.x, transform.position.y +
+        2, transform.position.z + 1);
+    }
+
+    private void Movement()
+    {
         anim.SetBool("jump", false);
         anim.SetBool("walk", false);
         anim.SetBool("attack", false);
-        float speed = 7.5f;
         rb.velocity = new Vector2(0, rb.velocity.y);
-
 
         Color hitColor = Color.white;
         bool onground = false;
@@ -76,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        bombs.text = "Bomb Count: " + bombCount.ToString();
+        bombs.text = ": " + bombCount.ToString();
 
 
         if (Input.GetKey("d") == true)
@@ -84,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
             sr.flipX = false;
             anim.SetBool("walk", true);
             print("Player pressed right");
+            speed = 7.5f;
             rb.velocity = new Vector2((speed), rb.velocity.y);
 
         }
@@ -92,21 +140,23 @@ public class PlayerMovement : MonoBehaviour
             anim.SetBool("walk", true);
             sr.flipX = true;
             print("Player pressed left");
-            rb.velocity = new Vector2(-(speed), rb.velocity.y);
+            speed = -7.5f;
+            rb.velocity = new Vector2((speed), rb.velocity.y);
+
         }
 
         if (Input.GetKey(KeyCode.LeftShift) == true && Input.GetKey("d") == true)
         {
-            speed = (speed + 2);
+            speed = 9.5f;
             print("Player pressed right");
             rb.velocity = new Vector2((speed), rb.velocity.y);
 
         }
         if (Input.GetKey(KeyCode.LeftShift) == true && Input.GetKey("a") == true)
         {
-            speed = (speed + 2);
+            speed = -9.5f;
             print("Player pressed left");
-            rb.velocity = new Vector2(-(speed), rb.velocity.y);
+            rb.velocity = new Vector2((speed), rb.velocity.y);
 
         }
 
@@ -124,35 +174,5 @@ public class PlayerMovement : MonoBehaviour
         {
             anim.SetBool("attack", true);
         }
-
-    }
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.gameObject.tag == "Enemy")
-        {
-            health.TakeDamage(20);
-        }
-    }
-    public void BombThrow()
-    {
-        bombCount--;
-        int moveDirection = 1;
-
-        // Instantiate the bullet at the position and rotation of the player
-        GameObject clone;
-        clone = Instantiate(weapon, transform.position, transform.rotation);
-
-
-        // get the rigidbody component
-        Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
-
-        int power = (direction) * 15;
-        // set the velocity
-        rb.velocity = new Vector3(power * moveDirection, 0, 0);
-
-
-        // set the position close to the player
-        rb.transform.position = new Vector3(transform.position.x, transform.position.y +
-        2, transform.position.z + 1);
     }
 }   

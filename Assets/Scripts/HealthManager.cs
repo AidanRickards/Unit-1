@@ -23,10 +23,6 @@ public class HealthManager : MonoBehaviour
         {
             Application.LoadLevel(Application.loadedLevel);
         }
-        if (Input.GetKeyDown("h") == true)
-        {
-            TakeDamage(20);
-        }
     }
 
     public void TakeDamage(float damage)
